@@ -51,6 +51,7 @@ namespace Cw_2_s30338
         public abstract void OproznijKontener();
         public string NrSeryjny => nrSeryjny;
         public double MasaLadunku => masaLadunku;
+        public double MaksymalnaLadownosc => maksymalnaLadownosc;
         public void SetMasaLadunku(double masa)
         {
             this.masaLadunku = masa;

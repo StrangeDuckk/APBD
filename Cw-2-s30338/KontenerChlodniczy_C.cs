@@ -36,14 +36,28 @@ namespace Cw_2_s30338
         {
             SetMasaLadunku(0);
         }
-        public void ZaladujKontener(string RodzajProduktu, double masa)
+        public void ZaladujKontener(string RodzajProduktu,double Temperatura, double masa)
         {
+            if(!ProduktyITemperatury.ContainsKey(RodzajProduktu))
+            {
+                throw new Exception($"{NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
+            }
             if (masa > MaksymalnaLadownosc || masa < 0)
             {
                 NiebezpiecznaSytuacja(NrSeryjny);
                 throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
             }
+            if(Temperatura> ProduktyITemperatury[RodzajProduktu])
+            {
+                NiebezpiecznaSytuacja(NrSeryjny);
+                throw new OverfillException($"{NrSeryjny}, Temperatura {Temperatura} jest za wysoka dla produktu {RodzajProduktu}!\n" +
+                    $"Maksymalna temperatura: {ProduktyITemperatury[RodzajProduktu]}");
+            }
 
+            this.RodzajProduktu = RodzajProduktu;
+            this.Temperatura = Temperatura;
+            SetMasaLadunku(masa);
+            Console.WriteLine($"zaladowano kontener {NrSeryjny} produktem {RodzajProduktu}");
         }
     }
 }

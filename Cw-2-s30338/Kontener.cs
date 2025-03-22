@@ -35,7 +35,7 @@ namespace Cw_2_s30338
             this.wagaWlasna = wagaWlasna;
             this.glebokosc = glebokosc;
             this.maksymalnaLadownosc = maksymalnaLadownosc;
-            this.nrSeryjny = "KON-" + typKonteneru + autonumeracja;
+            this.nrSeryjny = $"KON-{typKonteneru}-{autonumeracja}";
             autonumeracja++;
         }
         public abstract void OproznijKontener();

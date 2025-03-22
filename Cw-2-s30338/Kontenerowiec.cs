@@ -19,6 +19,14 @@ namespace Cw_2_s30338
             this.maksymalnaLiczbaKontenerow = maksymalnaLiczbaKontenerow;
             this.maksymalneObciazenie = maksymalneObciazenie;
         }
+        public Kontenerowiec(double maksymalnaPredkosc, int maksymalnaLiczbaKontenerow, double maksymalneObciazenie)
+        {
+            this.kontenery = new List<Kontener>();
+            this.maksymalnaPredkosc = maksymalnaPredkosc;
+            this.maksymalnaLiczbaKontenerow = maksymalnaLiczbaKontenerow;
+            this.maksymalneObciazenie = maksymalneObciazenie;
+        }
+
         public void StworzenieKontenera(string rodzajKontenera, 
                                         double wysokosc, 
                                         double glebokosc, 
@@ -34,6 +42,19 @@ namespace Cw_2_s30338
             else
                 throw new NotKnownType("Podano nieznany typ kontenera");
         }
-        
+        public List<Kontener> Kontenery => kontenery;
+        public void WypisanieKontenerowca()
+        {
+            Console.WriteLine("kontenerowiec zawiera:\n");
+            for (int i = 0; i < this.kontenery.Count; i++)
+            {
+                Console.WriteLine($"{kontenery[i].NrSeryjny}, " +
+                    $"wysokosc: {kontenery[i]}, " +
+                    $"glebokosc: {kontenery[i].Glebokosc}, " +
+                    $"waga wlasna: {kontenery[i].WagaWlasna}, " +
+                    $"maksymalna ladownosc: {kontenery[i].MaksymalnaLadownosc}, " +
+                    $"rodzaj kontenera: {kontenery[i].TypKontenera()}");
+            }
+        }
     }
 }

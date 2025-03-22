@@ -23,6 +23,10 @@ namespace Cw_2_s30338
             SetMasaLadunku(0.05 * MasaLadunku); //pozostawiamy 5% calego ladunku wewnatrz kontenera
             Console.WriteLine($"oprozniono kontener {NrSeryjny} z pozostawieniem 5% ladunku wewnatrz");
         }
+        public override string TypKontenera()
+        {
+            return "NaGaz_G";
+        }
         public void ZaladujKontener(double masa, double cisnienie)
         {
             if (masa > MaksymalnaLadownosc || masa < 0)

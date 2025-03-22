@@ -38,6 +38,10 @@ namespace Cw_2_s30338
         {
             SetMasaLadunku(0);
         }
+        public override string TypKontenera()
+        {
+            return "Chlodniczy_C";
+        }
         public void ZaladujKontener(string RodzajProduktu,double Temperatura, double masa)
         {
             if(!ProduktyITemperatury.ContainsKey(RodzajProduktu))

@@ -34,6 +34,10 @@ namespace Cw_2_s30338
         {
             SetMasaLadunku(0);
         }
+        public override string TypKontenera()
+        {
+            return "NaPlyny_L";
+        }
         public void ZaladujKontener(double masa, bool czyNiebezpieczny)
         {
             this.czyZawartoscNiebezpieczna = czyNiebezpieczny;

@@ -38,7 +38,6 @@ namespace Cw_2_s30338
             this.nrSeryjny = "KON-" + typKonteneru + autonumeracja;
             autonumeracja++;
         }
-        public abstract void ZaladujKontener(double masa, bool czyNiebezpieczny);
         public abstract void OproznijKontener();
         public string NrSeryjny => nrSeryjny;
         public double MaksymalnaLadownosc => maksymalnaLadownosc;

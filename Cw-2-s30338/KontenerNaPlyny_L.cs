@@ -34,7 +34,7 @@ namespace Cw_2_s30338
         {
             SetMasaLadunku(0);
         }
-        public override void ZaladujKontener(double masa, bool czyNiebezpieczny)
+        public void ZaladujKontener(double masa, bool czyNiebezpieczny)
         {
             this.czyZawartoscNiebezpieczna = czyNiebezpieczny;
             if (this.czyZawartoscNiebezpieczna)

@@ -24,7 +24,7 @@ namespace Cw_2_s30338
         }
         public void ZaladujKontener(double masa, double cisnienie)
         {
-            if (masa > MaksymalnaLadownosc)
+            if (masa > MaksymalnaLadownosc || masa < 0)
             {
                 NiebezpiecznaSytuacja(NrSeryjny);
                 throw new OverfillException($"przekroczono ladownosc kontenera {NrSeryjny}");

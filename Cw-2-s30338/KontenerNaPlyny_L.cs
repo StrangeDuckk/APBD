@@ -40,7 +40,7 @@ namespace Cw_2_s30338
             if (this.czyZawartoscNiebezpieczna)
             {
                 Console.WriteLine("ZAWARTOSC NIEBEZPIECZNA, kontener mozna wypelnic tylko w 50%, czyli " + MaksymalnaLadownosc * 0.5);
-                if (masa > MaksymalnaLadownosc * 0.5)
+                if (masa > MaksymalnaLadownosc * 0.5 || masa < 0)
                 {
                     NiebezpiecznaSytuacja("proba wypelnienia kontenera " + NrSeryjny + " niebezpieczna substancja powyzej 50% pojemniosci!");
                     throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
@@ -54,7 +54,7 @@ namespace Cw_2_s30338
             else
             {
                 Console.WriteLine("zawartosc zwykla, kontener mozna wypelnic w 90%, czyli: " + MaksymalnaLadownosc * 0.9);
-                if (masa > MaksymalnaLadownosc * 0.9)
+                if (masa > MaksymalnaLadownosc * 0.9 || masa < 0)
                 {
                     NiebezpiecznaSytuacja("proba wypelnienia kontenera " + NrSeryjny + "zwykla substancja powyzej 90% pojemnosci!");
                     throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,7 +15,7 @@ namespace Cw_2_s30338
         }
     }
 
-    public class Kontener
+    public abstract class Kontener
     {
         /*
          Masę ładunku (w kilogramach)
@@ -46,5 +47,12 @@ namespace Cw_2_s30338
             this.nrSeryjny = "KON-" + typKonteneru + autonumeracja;
             autonumeracja++;
         }
+        public abstract void OproznijKontener();
+        public abstract void ZaladujKontener(double masa);
+    }
+
+    class MyCustomException : Exception
+    {
+        public MyCustomException(string message) : base(message) {}
     }
 }

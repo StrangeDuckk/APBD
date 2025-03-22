@@ -14,6 +14,8 @@ namespace Cw_2_s30338
         public KontenerChlodniczy_C(string typKonteneru, double wysokosc, double glebokosc, double wagaWlasna, double maksymalnaLadownosc) 
             : base(typKonteneru, wysokosc, glebokosc, wagaWlasna, maksymalnaLadownosc)
         {
+            Console.WriteLine("utworzono kontener chlodniczy: " + NrSeryjny);
+
             ProduktyITemperatury = new Dictionary<string, double>
             {
                 {"Bananas", 13.3},
@@ -40,17 +42,17 @@ namespace Cw_2_s30338
         {
             if(!ProduktyITemperatury.ContainsKey(RodzajProduktu))
             {
-                throw new Exception($"{NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
+                throw new NotKnownType($"{NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
             }
             if (masa > MaksymalnaLadownosc || masa < 0)
             {
                 NiebezpiecznaSytuacja(NrSeryjny);
-                throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
+                throw new TooHighTemperature($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
             }
             if(Temperatura> ProduktyITemperatury[RodzajProduktu])
             {
                 NiebezpiecznaSytuacja(NrSeryjny);
-                throw new OverfillException($"{NrSeryjny}, Temperatura {Temperatura} jest za wysoka dla produktu {RodzajProduktu}!\n" +
+                throw new TooHighTemperature($"{NrSeryjny}, Temperatura {Temperatura} jest za wysoka dla produktu {RodzajProduktu}!\n" +
                     $"Maksymalna temperatura: {ProduktyITemperatury[RodzajProduktu]}");
             }
 

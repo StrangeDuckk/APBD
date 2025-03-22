@@ -10,4 +10,12 @@ namespace Cw_2_s30338
     {
         public OverfillException(string message) : base(message) { }
     }
+    class NotKnownType : Exception
+    {
+        public NotKnownType(string message) : base(message) { }
+    }
+    class TooHighTemperature : Exception
+    {
+        public TooHighTemperature(string message) : base(message) { }
+    }
 }

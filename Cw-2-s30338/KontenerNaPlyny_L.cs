@@ -23,7 +23,7 @@ namespace Cw_2_s30338
         public KontenerNaPlyny_L(string typKonteneru, double wysokosc, double glebokosc, double wagaWlasna, double maksymalnaLadownosc)
             : base(typKonteneru, wysokosc, glebokosc, wagaWlasna, maksymalnaLadownosc)
         {
-            Console.WriteLine("zaimplementowano kontener na plyny (L) o nr: " + NrSeryjny);
+            Console.WriteLine("utworzono kontener na plyny: " + NrSeryjny);
         }
 
         public void NiebezpiecznaSytuacja(string nrKontenera)

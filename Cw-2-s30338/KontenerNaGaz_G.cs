@@ -12,6 +12,7 @@ namespace Cw_2_s30338
         public KontenerNaGaz_G(string typKonteneru, double wysokosc, double glebokosc, double wagaWlasna, double maksymalnaLadownosc) 
             : base(typKonteneru, wysokosc, glebokosc, wagaWlasna, maksymalnaLadownosc)
         {
+            Console.WriteLine("utworzono kontener na gaz: " + NrSeryjny);
         }
         public void NiebezpiecznaSytuacja(string nrKontenera)
         {

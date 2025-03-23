@@ -21,8 +21,20 @@ namespace Cw_2_s30338
         public override void OproznijKontener()
         {
             SetMasaLadunku(0.05 * MasaLadunku); //pozostawiamy 5% calego ladunku wewnatrz kontenera
+            SetCzyZaladowany(false);
             Console.WriteLine($"oprozniono kontener {NrSeryjny} z pozostawieniem 5% ladunku wewnatrz");
         }
+
+        public override string ToString()
+        {
+            string tekst = $"Kontener {NrSeryjny}, wysokosc {Wysokosc}, waga {WagaWlasna}, glebokosc {Glebokosc}, maksymalna ladownosc {MaksymalnaLadownosc},\n";
+            if (!CzyZaladowany)
+                tekst += "kontener jest pusty";
+            else
+                tekst += $"kontener zawiera: produkt, o masie: {MasaLadunku}";
+            return tekst;
+        }
+
         public override string TypKontenera()
         {
             return "NaGaz_G";
@@ -34,9 +46,14 @@ namespace Cw_2_s30338
                 NiebezpiecznaSytuacja(NrSeryjny);
                 throw new OverfillException($"przekroczono ladownosc kontenera {NrSeryjny}");
             }
+            if (CzyZaladowany)
+            {
+                throw new AlreadyFilledKontener("ten kontener juz jest wypelniony gazem!");
+            }
             else
             {
                 SetMasaLadunku(masa);
+                SetCzyZaladowany(true);
                 this.cisnienie = cisnienie;
                 Console.WriteLine($"zaladowano kontener {NrSeryjny}");
             }

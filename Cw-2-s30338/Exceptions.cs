@@ -18,4 +18,8 @@ namespace Cw_2_s30338
     {
         public TooHighTemperature(string message) : base(message) { }
     }
+    class AlreadyFilledKontener :Exception
+    {
+        public AlreadyFilledKontener(string message) : base(message) { }
+    }
 }

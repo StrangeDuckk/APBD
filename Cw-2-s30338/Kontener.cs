@@ -28,6 +28,7 @@ namespace Cw_2_s30338
         private string nrSeryjny; // format: "KON-RODZAJ-AUTONUMERACJA"
         private double maksymalnaLadownosc;
         private static int autonumeracja = 0;
+        private bool czyZaladowany = false;
 
         public Kontener(string typKonteneru, double wysokosc, double glebokosc, double wagaWlasna, double maksymalnaLadownosc)
         {
@@ -38,13 +39,24 @@ namespace Cw_2_s30338
             this.nrSeryjny = $"KON-{typKonteneru}-{autonumeracja}";
             autonumeracja++;
         }
-        public abstract void OproznijKontener();
+        
         public string NrSeryjny => nrSeryjny;
         public double MaksymalnaLadownosc => maksymalnaLadownosc;
         public double MasaLadunku => masaLadunku;
+        public double Wysokosc => wysokosc;
+        public double Glebokosc => glebokosc;
+        public double WagaWlasna => wagaWlasna;
+        public bool CzyZaladowany => czyZaladowany;
+        public void SetCzyZaladowany(bool a)
+        {
+            this.czyZaladowany = a;
+        }
         public void SetMasaLadunku(double masa)
         {
             this.masaLadunku = masa;
         }
+        public abstract void OproznijKontener();
+        public abstract string TypKontenera();
+        public abstract override string ToString();
     }
 }

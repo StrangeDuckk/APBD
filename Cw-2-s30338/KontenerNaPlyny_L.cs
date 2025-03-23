@@ -19,7 +19,7 @@ namespace Cw_2_s30338
         Jeśli naruszymy dowolną z opisanych reguł - powinniśmy zgłosić informacje o próbie wykonania niebezpiecznej
         operacji.
          */
-        public bool czyZawartoscNiebezpieczna;
+        private bool czyZawartoscNiebezpieczna;
         public KontenerNaPlyny_L(string typKonteneru, double wysokosc, double glebokosc, double wagaWlasna, double maksymalnaLadownosc)
             : base(typKonteneru, wysokosc, glebokosc, wagaWlasna, maksymalnaLadownosc)
         {
@@ -33,7 +33,19 @@ namespace Cw_2_s30338
         public override void OproznijKontener()
         {
             SetMasaLadunku(0);
+            SetCzyZaladowany(false);
         }
+
+        public override string ToString()
+        {
+            string tekst = $"Kontener {NrSeryjny}, wysokosc {Wysokosc}, waga {WagaWlasna}, glebokosc {Glebokosc}, maksymalna ladownosc {MaksymalnaLadownosc},\n";
+            if (!CzyZaladowany)
+                tekst += "kontener jest pusty";
+            else
+                tekst += $"kontener zawiera: produkt, o masie: {MasaLadunku}";
+            return tekst;
+        }
+
         public override string TypKontenera()
         {
             return "NaPlyny_L";
@@ -41,6 +53,8 @@ namespace Cw_2_s30338
         public void ZaladujKontener(double masa, bool czyNiebezpieczny)
         {
             this.czyZawartoscNiebezpieczna = czyNiebezpieczny;
+            if (CzyZaladowany)
+                throw new AlreadyFilledKontener("ten kontener juz zawiera plyn!");
             if (this.czyZawartoscNiebezpieczna)
             {
                 Console.WriteLine("ZAWARTOSC NIEBEZPIECZNA, kontener mozna wypelnic tylko w 50%, czyli " + MaksymalnaLadownosc * 0.5);
@@ -52,6 +66,7 @@ namespace Cw_2_s30338
                 else
                 {
                     SetMasaLadunku(masa);
+                    SetCzyZaladowany(true);
                     Console.WriteLine("zaladowano kontener: " + NrSeryjny);
                 }
             }
@@ -66,6 +81,7 @@ namespace Cw_2_s30338
                 else
                 {
                     SetMasaLadunku(masa);
+                    SetCzyZaladowany(true);
                     Console.WriteLine("zaladowano kontener: " + NrSeryjny);
                 }
             }

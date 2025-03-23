@@ -37,16 +37,30 @@ namespace Cw_2_s30338
         public override void OproznijKontener()
         {
             SetMasaLadunku(0);
+            SetCzyZaladowany(false);
         }
         public override string TypKontenera()
         {
             return "Chlodniczy_C";
+        }
+        public override string ToString()
+        {
+            string tekst = $"Kontener {NrSeryjny}, wysokosc {Wysokosc}, waga {WagaWlasna}, glebokosc {Glebokosc}, maksymalna ladownosc {MaksymalnaLadownosc},\n";
+            if (!CzyZaladowany)
+                tekst += "kontener jest pusty";
+            else
+                tekst += $"kontener zawiera: produkt, o masie: {MasaLadunku}";
+            return tekst;
         }
         public void ZaladujKontener(string RodzajProduktu,double Temperatura, double masa)
         {
             if(!ProduktyITemperatury.ContainsKey(RodzajProduktu))
             {
                 throw new NotKnownType($"{NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
+            }
+            if(CzyZaladowany)
+            {
+                throw new AlreadyFilledKontener("ten kontener ma juz zawartosc");
             }
             if (masa > MaksymalnaLadownosc || masa < 0)
             {
@@ -62,6 +76,7 @@ namespace Cw_2_s30338
 
             this.RodzajProduktu = RodzajProduktu;
             this.Temperatura = Temperatura;
+            SetCzyZaladowany(true);
             SetMasaLadunku(masa);
             Console.WriteLine($"zaladowano kontener {NrSeryjny} produktem {RodzajProduktu}");
         }

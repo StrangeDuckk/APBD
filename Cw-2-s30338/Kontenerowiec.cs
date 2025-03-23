@@ -17,12 +17,11 @@ namespace Cw_2_s30338
         private static int autonumeracja=0;
         public Kontenerowiec(Kontener[] kontenery, double maksymalnaPredkosc, int maksymalnaLiczbaKontenerow, double maksymalneObciazenie)
         {
-            this.kontenery = new List<Kontener>();
+            this.kontenery = new List<Kontener>(kontenery);
             this.maksymalnaPredkosc = maksymalnaPredkosc;
             this.maksymalnaLiczbaKontenerow = maksymalnaLiczbaKontenerow;
             this.maksymalneObciazenie = maksymalneObciazenie;
-            this.index = autonumeracja;
-            autonumeracja++;
+            this.index = autonumeracja++;
         }
         public Kontenerowiec(double maksymalnaPredkosc, int maksymalnaLiczbaKontenerow, double maksymalneObciazenie)
         {
@@ -79,9 +78,11 @@ namespace Cw_2_s30338
                 throw new NotKnownType("Podano nieznany typ kontenera");
         }
         public List<Kontener> Kontenery => kontenery;
+        public int Index { get; }
+        public int MaksymalnaLiczbaKontenerow { get; }
         public void ZaladujNaStatek(Kontener kontener)
         {
-            if (this.maksymalnaLiczbaKontenerow+1 <= this.maksymalnaLiczbaKontenerow)
+            if (this.kontenery.Count < this.maksymalnaLiczbaKontenerow)
             {
                 kontenery.Add(kontener);
                 Console.WriteLine($"Załadowano kontener {kontener.NrSeryjny} na kontenerowiec");
@@ -89,6 +90,16 @@ namespace Cw_2_s30338
             else
             {
                 Console.WriteLine("kontenerowiec jest pełny.");
+            }
+            double obecneObciazenie = kontenery.Sum(k => k.WagaWlasna + k.MasaLadunku);
+            if (obecneObciazenie + kontener.WagaWlasna + kontener.MasaLadunku <= maksymalneObciazenie)
+            {
+                kontenery.Add(kontener);
+                Console.WriteLine($"Załadowano kontener {kontener.NrSeryjny} na kontenerowiec");
+            }
+            else
+            {
+                Console.WriteLine("Nie można załadować — przekroczono maksymalne obciążenie statku.");
             }
         }
         public void ZaladujNaStatek(List<Kontener> kontener)

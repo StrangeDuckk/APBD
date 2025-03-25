@@ -8,7 +8,6 @@ namespace Cw_2_s30338
 {
     public interface IHazardNotifier
     {
-        void NiebezpiecznaSytuacja(string nrKontenera);
-        void OproznijKontener();
+        void NiebezpiecznaSytuacja();
     }
 }

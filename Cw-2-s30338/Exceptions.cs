@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cw_2_s30338
 {
+    //nieuzywana klasa
     class OverfillException : Exception
     {
         public OverfillException(string message) : base(message) { }

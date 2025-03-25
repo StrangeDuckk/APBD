@@ -55,6 +55,8 @@ namespace Cw_2_s30338
                         Console.WriteLine("podaj wartosc ponownie:");
                         break;
                 }
+
+                //Console.Clear();
                 wypisanieOpcji(listaKontenerowcow, listaKontenerow);
                 input = int.Parse(Console.ReadLine());
             }
@@ -102,7 +104,7 @@ namespace Cw_2_s30338
         private static void StworzenieKontenera(List<Kontener> listaKontenerow)
         {
             Console.WriteLine("podaj rodzaj kontenera (L,C,G): ");
-            var rodzaj = Console.ReadLine();
+            var rodzaj = Console.ReadLine().ToUpper();
             Console.WriteLine("podaj wysokosc");
             var wys = double.Parse(Console.ReadLine());
             Console.WriteLine("podaj glebokosc");
@@ -145,11 +147,11 @@ namespace Cw_2_s30338
                     Console.WriteLine("podaj rodzaj produktu:");
                     var rodzaj = Console.ReadLine();
                     Console.WriteLine("podaj temperature produktu:");
+                    var temperatura = double.Parse(Console.ReadLine());
+                    Console.WriteLine("podaj mase:");
                     var masa = double.Parse(Console.ReadLine());
-                    Console.WriteLine("podaj cisnienie:");
-                    var cisnienie = double.Parse(Console.ReadLine());
 
-                    konC.ZaladujKontener(rodzaj, masa, cisnienie);
+                    konC.ZaladujKontener(rodzaj, temperatura, masa);
                 }
                 else if (kontener is KontenerNaPlyny_L konL)
                 {

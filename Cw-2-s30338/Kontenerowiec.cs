@@ -75,7 +75,7 @@ namespace Cw_2_s30338
             else if (rodzajKontenera == "L")
                 kontenery.Add(new KontenerNaPlyny_L(rodzajKontenera, wysokosc, glebokosc, wagaWlasna, maksymalnaLadownosc));
             else
-                throw new NotKnownType("Podano nieznany typ kontenera");
+                Console.WriteLine($"UWAGA!!!: Podano nieznany typ kontenera");
         }
         public List<Kontener> Kontenery => kontenery;
         public int Index { get; }

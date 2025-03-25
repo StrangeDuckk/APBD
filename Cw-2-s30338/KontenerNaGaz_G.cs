@@ -14,7 +14,7 @@ namespace Cw_2_s30338
         {
             Console.WriteLine("utworzono kontener na gaz: " + NrSeryjny);
         }
-        public void NiebezpiecznaSytuacja(string nrKontenera)
+        public void NiebezpiecznaSytuacja()
         {
             Console.WriteLine("Doszlo do niebezpiecznej sytuacji w kontenerze: " + NrSeryjny);
         }
@@ -43,12 +43,12 @@ namespace Cw_2_s30338
         {
             if (masa > MaksymalnaLadownosc || masa < 0)
             {
-                NiebezpiecznaSytuacja(NrSeryjny);
-                throw new OverfillException($"przekroczono ladownosc kontenera {NrSeryjny}");
+                NiebezpiecznaSytuacja();
+                Console.WriteLine($"UWAGA!!!: przekroczono ladownosc kontenera {NrSeryjny}");
             }
             if (CzyZaladowany)
             {
-                throw new AlreadyFilledKontener("ten kontener juz jest wypelniony gazem!");
+                Console.WriteLine($"UWAGA!!!: ten kontener juz jest wypelniony gazem!");
             }
             else
             {

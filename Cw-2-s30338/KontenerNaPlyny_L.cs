@@ -26,7 +26,7 @@ namespace Cw_2_s30338
             Console.WriteLine("utworzono kontener na plyny: " + NrSeryjny);
         }
 
-        public void NiebezpiecznaSytuacja(string nrKontenera)
+        public void NiebezpiecznaSytuacja()
         {
             Console.WriteLine("Doszlo do niebezpiecznej sytuacji w kontenerze: " + NrSeryjny);
         }
@@ -54,14 +54,14 @@ namespace Cw_2_s30338
         {
             this.czyZawartoscNiebezpieczna = czyNiebezpieczny;
             if (CzyZaladowany)
-                throw new AlreadyFilledKontener("ten kontener juz zawiera plyn!");
+                Console.WriteLine($"UWAGA!!!: ten kontener juz zawiera plyn!");
             if (this.czyZawartoscNiebezpieczna)
             {
                 Console.WriteLine("ZAWARTOSC NIEBEZPIECZNA, kontener mozna wypelnic tylko w 50%, czyli " + MaksymalnaLadownosc * 0.5);
                 if (masa > MaksymalnaLadownosc * 0.5 || masa < 0)
                 {
-                    NiebezpiecznaSytuacja("proba wypelnienia kontenera " + NrSeryjny + " niebezpieczna substancja powyzej 50% pojemniosci!");
-                    throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
+                    NiebezpiecznaSytuacja();
+                    Console.WriteLine($"UWAGA!!!: proba wypelnienia kontenera " + NrSeryjny + " niebezpieczna substancja powyzej 50% pojemniosci!");
                 }
                 else
                 {
@@ -75,8 +75,8 @@ namespace Cw_2_s30338
                 Console.WriteLine("zawartosc zwykla, kontener mozna wypelnic w 90%, czyli: " + MaksymalnaLadownosc * 0.9);
                 if (masa > MaksymalnaLadownosc * 0.9 || masa < 0)
                 {
-                    NiebezpiecznaSytuacja("proba wypelnienia kontenera " + NrSeryjny + "zwykla substancja powyzej 90% pojemnosci!");
-                    throw new OverfillException($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
+                    NiebezpiecznaSytuacja();
+                    Console.WriteLine($"UWAGA!!!: proba wypelnienia kontenera " + NrSeryjny + "zwykla substancja powyzej 90% pojemnosci!");
                 }
                 else
                 {

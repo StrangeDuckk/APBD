@@ -30,9 +30,9 @@ namespace Cw_2_s30338
                 {"Eggs", 19.0}
             };
         }
-        public void NiebezpiecznaSytuacja(string nrKontenera)
+        public void NiebezpiecznaSytuacja()
         {
-            Console.WriteLine("Doszlo do niebezpiecznej sytuacji w kontenerze: " + NrSeryjny);
+            Console.WriteLine("Doszlo do niebezpiecznej sytuacji w kontenerze: " + this.NrSeryjny);
         }
         public override void OproznijKontener()
         {
@@ -56,21 +56,23 @@ namespace Cw_2_s30338
         {
             if(!ProduktyITemperatury.ContainsKey(RodzajProduktu))
             {
-                throw new NotKnownType($"{NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
+                NiebezpiecznaSytuacja();
+                Console.WriteLine($"UWAGA!!!: {NrSeryjny}, nie mozna dodawac produktu: {RodzajProduktu}, nieznany typ");
             }
             if(CzyZaladowany)
             {
-                throw new AlreadyFilledKontener("ten kontener ma juz zawartosc");
+                NiebezpiecznaSytuacja();
+                Console.WriteLine($"UWAGA!!!: ten kontener ma juz zawartosc");
             }
             if (masa > MaksymalnaLadownosc || masa < 0)
             {
-                NiebezpiecznaSytuacja(NrSeryjny);
-                throw new TooHighTemperature($"Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
+                NiebezpiecznaSytuacja();
+                Console.WriteLine($"UWAGA!!!: Przekroczono dozwolony limit wypelnienia dla kontenera: {NrSeryjny}");
             }
             if(Temperatura> ProduktyITemperatury[RodzajProduktu])
             {
-                NiebezpiecznaSytuacja(NrSeryjny);
-                throw new TooHighTemperature($"{NrSeryjny}, Temperatura {Temperatura} jest za wysoka dla produktu {RodzajProduktu}!\n" +
+                NiebezpiecznaSytuacja();
+                Console.WriteLine($"UWAGA!!!: {NrSeryjny}, Temperatura {Temperatura} jest za wysoka dla produktu {RodzajProduktu}!\n" +
                     $"Maksymalna temperatura: {ProduktyITemperatury[RodzajProduktu]}");
             }
 

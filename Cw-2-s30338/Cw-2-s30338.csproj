@@ -46,15 +46,13 @@
     <Compile Include="Kontenerowiec.cs" />
     <Compile Include="KontenerChlodniczy_C.cs" />
     <Compile Include="KontenerNaGaz_G.cs" />
-    <Compile Include="Exceptions.cs" />
     <Compile Include="IHazardNotifier.cs" />
     <Compile Include="KontenerNaPlyny_L.cs" />
     <Compile Include="Kontener.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

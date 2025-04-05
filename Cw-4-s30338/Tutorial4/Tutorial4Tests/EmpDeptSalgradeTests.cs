@@ -69,7 +69,8 @@ public class EmpDeptSalgradeTests
         var result = emps.Join(depts, 
                                 e => e.DeptNo,//first
                                 d => d.DeptNo,//second
-                                (e,d) => new { d.DName, e.EName }).ToList(); //what to return
+                                (e,d) => new { d.DName, e.EName })
+                         .ToList(); //what to return
 
         Assert.Contains(result, r => r.DName == "SALES" && r.EName == "ALLEN");
     }
@@ -81,9 +82,11 @@ public class EmpDeptSalgradeTests
     {
         var emps = Database.GetEmps();
 
-        // var result = null; 
-        //
-        // Assert.Contains(result, g => g.DeptNo == 30 && g.Count == 2);
+        var result = emps.GroupBy(e => e.DeptNo) //grupowanie tworzy mape z elementami grupujacymi jako kluczami
+                         .Select(g => new {DeptNo = g.Key , Count = g.Count() })
+                         .ToList(); 
+        
+        Assert.Contains(result, g => g.DeptNo == 30 && g.Count == 2);
     }
 
     // 7. SelectMany (simulate flattening)
@@ -93,9 +96,11 @@ public class EmpDeptSalgradeTests
     {
         var emps = Database.GetEmps();
 
-        // var result = null; 
-        //
-        // Assert.All(result, r => Assert.NotNull(r.Comm));
+        var result = emps.Where(e => e.Comm is not null)
+                         .Select(e => new { e.EName, e.Comm })
+                         .ToList(); 
+        
+        Assert.All(result, r => Assert.NotNull(r.Comm));
     }
 
     // 8. Join with Salgrade
@@ -106,9 +111,13 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
         var grades = Database.GetSalgrades();
 
-        // var result = null;
-        //
-        // Assert.Contains(result, r => r.EName == "ALLEN" && r.Grade == 3);
+        var result = (from e in emps
+                      from g in grades
+                      where e.Sal >= g.Losal && e.Sal <= g.Hisal
+                      select new { e.EName, g.Grade })
+                      .ToList();
+        
+        Assert.Contains(result, r => r.EName == "ALLEN" && r.Grade == 3);
     }
 
     // 9. Aggregation (AVG)

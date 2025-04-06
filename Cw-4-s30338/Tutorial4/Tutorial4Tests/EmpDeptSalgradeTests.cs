@@ -97,7 +97,7 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = emps.Where(e => e.Comm is not null)
-                         .Select(e => new { e.EName, e.Comm })
+                         .SelectMany(e => e.EName,(e,c) => new { e.EName, e.Comm })
                          .ToList(); 
         
         Assert.All(result, r => Assert.NotNull(r.Comm));

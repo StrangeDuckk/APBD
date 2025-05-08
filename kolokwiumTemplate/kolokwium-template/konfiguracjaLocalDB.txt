@@ -2,6 +2,7 @@
 sqllocaldb start MSSQLLocalDB
 
 w mssql management studio:
+server name: (localdb)\MSSQLLocalDB
 
 -- Tworzenie bazy danych
 CREATE DATABASE apbd;

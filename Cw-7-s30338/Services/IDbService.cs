@@ -6,48 +6,16 @@ namespace Cw_7_s30338.Services;
 
 public interface IDbService
 {
-    public Task<IEnumerable<TripGetDTO>> GetTripsInfo();
     public Task<IEnumerable<TripCountryGetDTO>> GetTripsInfoAndCountries();
     public Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id);
     public Task<ClientGetDTO> GetClientById(int id);
     public Task<ClientGetDTO> CreateClient(ClientCreateDTO client);
+    public Task<Client_TripPutGetDTO> putClientTrip(int id, int tripId);
+    public Task DeleteClientTrip(int id, int tripId);
 }
 
 public class DbService(IConfiguration configuration): IDbService
 {
-    public async Task<IEnumerable<TripGetDTO>> GetTripsInfo()
-    {
-        // ---------- wypisanie informacji o wycieczkach (bez krajow) -----------
-        
-        var result = new List<TripGetDTO>();
-        
-        var connectionString = configuration.GetConnectionString("Default");
-        
-        await using var connection = new SqlConnection(connectionString);
-        var sql = "select IdTrip, Name, Description,DateFrom, DateTo,MaxPeople from Trip";
-        
-        await using var command = new SqlCommand(sql, connection);
-        await connection.OpenAsync();
-        
-        await using var reader = await command.ExecuteReaderAsync();
-        if (!await reader.ReadAsync())
-        {
-            throw new NotFoundException("Nie znaleziono zadnej wycieczki");
-        }
-        while (await reader.ReadAsync())
-        {
-            result.Add(new TripGetDTO
-            {
-                IdTrip = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Description = reader.GetString(2),
-                DateFrom = reader.GetDateTime(3),
-                DateTo = reader.GetDateTime(4),
-                MaxPeople = reader.GetInt32(5)
-            });
-        }
-        return result;
-    }
     public async Task<IEnumerable<TripCountryGetDTO>> GetTripsInfoAndCountries()
     {
         var result = new List<TripCountryGetDTO>();
@@ -141,13 +109,12 @@ public class DbService(IConfiguration configuration): IDbService
         } while (await reader.ReadAsync());
         return result;
     }
-
     public async Task<ClientGetDTO> GetClientById(int id)
     {
         var connectionString = configuration.GetConnectionString("Default");
         
         await using var connection = new SqlConnection(connectionString);
-        var sql = "select Id,FirstName,LastName,Email,Telephone,Pesel from Client where Id = @id";
+        var sql = "select IdClient,FirstName,LastName,Email,Telephone,Pesel from Client where Id = @id";
         
         await using var command = new SqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", id);
@@ -170,7 +137,6 @@ public class DbService(IConfiguration configuration): IDbService
             Pesel = reader.GetString(5),
         };
     }
-
     public async Task<ClientGetDTO> CreateClient(ClientCreateDTO client)
     {
         // ------------- walidacja danych ---------------
@@ -208,5 +174,110 @@ public class DbService(IConfiguration configuration): IDbService
             Telephone = client.Telephone,
             Pesel = client.Pesel
         };
+    }
+
+    public async Task<Client_TripPutGetDTO> putClientTrip(int id, int tripId)
+    {
+        var result = new List<ClientsTripGetDTO>();
+        
+        var connectionString = configuration.GetConnectionString("Default");
+        await using var connection = new SqlConnection(connectionString);
+        
+        //----- sprawdzenie istnienia klienta -------
+        var sqlklient = @"select 1 from client where IdClient = @id";
+        await using (var commandKlient = new SqlCommand(sqlklient, connection))
+        {
+            commandKlient.Parameters.Add(new SqlParameter("@id", id));
+            await connection.OpenAsync();
+            await using var readerKlient = await commandKlient.ExecuteReaderAsync();
+            if (!await readerKlient.ReadAsync())
+            {
+                throw new NotFoundException($"klient o id {id} nie istnieje");
+            }
+        }
+        
+        //----- sprawdzenie istnienia wycieczki i liczby uczestnikow -------
+        var sqltrip = @"select 1 from trip where IdTrip = @tripId";
+        await using (var commandtrip = new SqlCommand(sqltrip, connection))
+        {
+            commandtrip.Parameters.Add(new SqlParameter("@id", tripId));
+            await using var readertrip = await commandtrip.ExecuteReaderAsync();
+            if (!await readertrip.ReadAsync())
+            {
+                throw new NotFoundException($"wycieczka o id {id} nie istnieje");
+            }
+
+            var sqlLiczbaUczestnikow = $"select count(*) from Client_Trip where IdTrip = @tripId";
+            await using (var commandLiczba = new SqlCommand(sqlLiczbaUczestnikow, connection))
+            {
+                commandLiczba.Parameters.Add(new SqlParameter("@tripId", tripId));
+                await using var readerLiczba = await commandLiczba.ExecuteReaderAsync();
+                var liczba = readerLiczba.GetInt32(0);
+                if (liczba+1> readertrip.GetInt32(5))
+                {
+                    throw new FilledTripException($"Wycieczka o id {id} jest pelna");
+                }
+            }
+        }
+        
+        // ------ dodanei klienta do wycieczki ------
+        var sqlDodanie = @"Insert Into Client_Trip (IdClient, IdTrip, RegisteredAt) values (@id, @tripId, @registeredAt)";
+        await using (var commandDodanie = new SqlCommand(sqlDodanie, connection))
+        {
+            commandDodanie.Parameters.Add(new SqlParameter("@id", id));
+            commandDodanie.Parameters.Add(new SqlParameter("@tripId", tripId));
+            commandDodanie.Parameters.Add(new SqlParameter("@registeredAt", Convert.ToInt32(DateTime.UtcNow)));
+            
+            await commandDodanie.ExecuteNonQueryAsync();
+        }
+
+        return new Client_TripPutGetDTO
+        {
+            Id = id,
+            IdTrip = tripId,
+            RegisteredAt = Convert.ToInt32(DateTime.UtcNow)
+        };
+    }
+
+    public async Task DeleteClientTrip(int id, int tripId)
+    {
+        var result = new List<ClientsTripGetDTO>();
+        
+        var connectionString = configuration.GetConnectionString("Default");
+        await using var connection = new SqlConnection(connectionString);
+        await connection.OpenAsync();
+        
+        //----- sprawdzenie istnienia klienta -------
+        var sqlklient = @"select 1 from client where IdClient = @id";
+        await using (var commandKlient = new SqlCommand(sqlklient, connection))
+        {
+            commandKlient.Parameters.Add(new SqlParameter("@id", id));
+            await using var readerKlient = await commandKlient.ExecuteReaderAsync();
+            if (!await readerKlient.ReadAsync())
+            {
+                throw new NotFoundException($"klient o id {id} nie istnieje");
+            }
+        }
+        
+        //----- sprawdzenie istnienia wycieczki -------
+        var sqltrip = @"select 1 from trip where IdTrip = @tripId";
+        await using (var commandtrip = new SqlCommand(sqltrip, connection))
+        {
+            commandtrip.Parameters.Add(new SqlParameter("@id", tripId));
+            await using var readertrip = await commandtrip.ExecuteReaderAsync();
+            if (!await readertrip.ReadAsync())
+            {
+                throw new NotFoundException($"wycieczka o id {id} nie istnieje");
+            }
+        }
+        
+        // -------- usuniecie powiazan klient-wycieczka -------
+        var sqlDelete = "Delete from Client_Trip where IdTrip = @tripId and idClient = @id";
+        await using (var commandDelete = new SqlCommand(sqlDelete, connection))
+        {
+            commandDelete.Parameters.Add(new SqlParameter("@id", id));
+            commandDelete.Parameters.Add(new SqlParameter("@tripId", tripId));
+            await commandDelete.ExecuteNonQueryAsync();
+        }
     }
 }

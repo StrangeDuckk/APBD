@@ -9,6 +9,8 @@ public interface IDbService
     public Task<IEnumerable<TripGetDTO>> GetTripsInfo();
     public Task<IEnumerable<TripCountryGetDTO>> GetTripsInfoAndCountries();
     public Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id);
+    public Task<ClientGetDTO> GetClientById(int id);
+    public Task<ClientGetDTO> CreateClient(ClientCreateDTO client);
 }
 
 public class DbService(IConfiguration configuration): IDbService
@@ -86,7 +88,6 @@ public class DbService(IConfiguration configuration): IDbService
         }
         return result;
     }
-
     public async Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id)
     {
         var result = new List<ClientsTripGetDTO>();
@@ -139,5 +140,73 @@ public class DbService(IConfiguration configuration): IDbService
             });
         } while (await reader.ReadAsync());
         return result;
+    }
+
+    public async Task<ClientGetDTO> GetClientById(int id)
+    {
+        var connectionString = configuration.GetConnectionString("Default");
+        
+        await using var connection = new SqlConnection(connectionString);
+        var sql = "select Id,FirstName,LastName,Email,Telephone,Pesel from Client where Id = @id";
+        
+        await using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@id", id);
+        
+        await connection.OpenAsync();
+        
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+        {
+            throw new NotFoundException($"Nie znaleziono klienta o id {id}");
+        }
+        
+        return new ClientGetDTO
+        {
+            Id = reader.GetInt32(0),
+            FirstName = reader.GetString(1),
+            LastName = reader.GetString(2),
+            Email = reader.GetString(3),
+            Telephone = reader.GetString(4),
+            Pesel = reader.GetString(5),
+        };
+    }
+
+    public async Task<ClientGetDTO> CreateClient(ClientCreateDTO client)
+    {
+        // ------------- walidacja danych ---------------
+        if (string.IsNullOrEmpty(client.FirstName) || string.IsNullOrEmpty(client.LastName) || 
+            string.IsNullOrEmpty(client.Email) || string.IsNullOrEmpty(client.Telephone) || 
+            string.IsNullOrEmpty(client.Pesel))
+        {
+            throw new BadRequest("Wszystkie dane muszą być wypełnione, podaj poprawne dane.");
+        }
+
+        var connectionString = configuration.GetConnectionString("Default");
+        
+        await using var connection = new SqlConnection(connectionString);
+        var sql = @"Insert into Client (FirstName, LastName, Email, Telephone, Pesel) 
+                    values (@FirstName, @LastName, @Email, @Telephone, @Pesel)
+                    select scope_identity()"; // zwraca id ostatnio wstawionego wiersza
+        
+        await using var command = new SqlCommand(sql, connection);
+        
+        command.Parameters.AddWithValue("@FirstName", client.FirstName);
+        command.Parameters.AddWithValue("@LastName", client.LastName);
+        command.Parameters.AddWithValue("@Email", client.Email);
+        command.Parameters.AddWithValue("@Telephone", client.Telephone);
+        command.Parameters.AddWithValue("@Pesel", client.Pesel);
+        
+        await connection.OpenAsync();
+        
+        var newId = Convert.ToInt32(await command.ExecuteScalarAsync()); //sciagniecie rozmiaru
+        return new ClientGetDTO
+        {
+            Id = newId,
+            FirstName = client.FirstName,
+            LastName = client.LastName,
+            Email = client.Email,
+            Telephone = client.Telephone,
+            Pesel = client.Pesel
+        };
     }
 }

@@ -164,7 +164,7 @@ public class DbService(IConfiguration configuration): IDbService
         
         await connection.OpenAsync();
         
-        var newId = Convert.ToInt32(await command.ExecuteScalarAsync()); //sciagniecie rozmiaru
+        var newId = Convert.ToInt32(await command.ExecuteScalarAsync()); //sciagniecie maksymalnego indexu
         return new ClientGetDTO
         {
             Id = newId,
@@ -176,69 +176,66 @@ public class DbService(IConfiguration configuration): IDbService
         };
     }
 
-    public async Task<Client_TripPutGetDTO> putClientTrip(int id, int tripId)
+    public async Task<Client_TripPutGetDTO> putClientTrip(int clientId, int tripId)
     {
-        var result = new List<ClientsTripGetDTO>();
-        
         var connectionString = configuration.GetConnectionString("Default");
         await using var connection = new SqlConnection(connectionString);
-        
-        //----- sprawdzenie istnienia klienta -------
-        var sqlklient = @"select 1 from client where IdClient = @id";
-        await using (var commandKlient = new SqlCommand(sqlklient, connection))
-        {
-            commandKlient.Parameters.Add(new SqlParameter("@id", id));
-            await connection.OpenAsync();
-            await using var readerKlient = await commandKlient.ExecuteReaderAsync();
-            if (!await readerKlient.ReadAsync())
-            {
-                throw new NotFoundException($"klient o id {id} nie istnieje");
-            }
-        }
-        
-        //----- sprawdzenie istnienia wycieczki i liczby uczestnikow -------
-        var sqltrip = @"select 1 from trip where IdTrip = @tripId"; //sprawdzenie czy wycieczka o id istnieje
-        await using (var commandtrip = new SqlCommand(sqltrip, connection))
-        {
-            commandtrip.Parameters.Add(new SqlParameter("@id", tripId));
-            await using var readertrip = await commandtrip.ExecuteReaderAsync();
-            if (!await readertrip.ReadAsync())
-            {
-                throw new NotFoundException($"wycieczka o id {id} nie istnieje");
-            }
+        await connection.OpenAsync();
 
-            var sqlLiczbaUczestnikow = $"select count(*) from Client_Trip where IdTrip = @tripId"; //sciagniecie ile osob jest zpaisanych na ta wycieczke
-            await using (var commandLiczba = new SqlCommand(sqlLiczbaUczestnikow, connection))
-            {
-                commandLiczba.Parameters.Add(new SqlParameter("@tripId", tripId));
-                await using var readerLiczba = await commandLiczba.ExecuteReaderAsync();
-                var liczba = readerLiczba.GetInt32(0);
-                if (liczba+1> readertrip.GetInt32(5))//sprawdzenie czy mozna dopisac jeszcze jedna osobe
-                {
-                    throw new FilledTripException($"Wycieczka o id {id} jest pelna");
-                }
-            }
-        }
-        
-        // ------ dodanei klienta do wycieczki ------
-        var sqlDodanie = @"Insert Into Client_Trip (IdClient, IdTrip, RegisteredAt) values (@id, @tripId, @registeredAt)";
-        await using (var commandDodanie = new SqlCommand(sqlDodanie, connection))
+        // --------- sprawdzenie istnienia klient ---------
+        var sqlKlient = @"SELECT 1 FROM Client WHERE IdClient = @clientid";
+        var checkClient = new SqlCommand(sqlKlient, connection);
+        checkClient.Parameters.AddWithValue("@clientid", clientId);
+        if (await checkClient.ExecuteScalarAsync() is null)
         {
-            commandDodanie.Parameters.Add(new SqlParameter("@id", id));
-            commandDodanie.Parameters.Add(new SqlParameter("@tripId", tripId));
-            commandDodanie.Parameters.Add(new SqlParameter("@registeredAt", Convert.ToInt32(DateTime.UtcNow)));
-            
-            await commandDodanie.ExecuteNonQueryAsync();
+            throw new KeyNotFoundException($"Client with ID {clientId} does not exist.");
         }
 
-        return new Client_TripPutGetDTO
+        // --------- sprawdzenie istnienia wycieczki ---------
+        var sqltrip = @"SELECT MaxPeople FROM Trip WHERE IdTrip = @tripId";
+        var checkTrip = new SqlCommand(sqltrip, connection);
+        checkTrip.Parameters.AddWithValue("@tripId", tripId);
+        var maxPeopleObj = await checkTrip.ExecuteScalarAsync();
+        if (maxPeopleObj is null)
         {
-            Id = id,
-            IdTrip = tripId,
-            RegisteredAt = Convert.ToInt32(DateTime.UtcNow)
-        };
+            throw new KeyNotFoundException($"Trip with ID {tripId} does not exist.");
+        }
+
+        // ------- sprawdzenie czy klient sie zmiesci ---------
+        var maxPeople = Convert.ToInt32(maxPeopleObj);
+
+        // -- ilosc zapisanych do tej wycieczki klientow --
+        var count = new SqlCommand("SELECT COUNT(*) FROM Client_Trip WHERE IdTrip = @tripId", connection);
+        count.Parameters.AddWithValue("@tripId", tripId);
+        int currentCount = Convert.ToInt32(await count.ExecuteScalarAsync());
+        if (currentCount >= maxPeople)
+        {
+            throw new InvalidOperationException("Wszystkie miejsca na ta wycieczke sa juz zajete.");
+        }
+
+        const string checkSql = @"SELECT 1 FROM Client_Trip WHERE IdClient = @IdClient AND IdTrip = @IdTrip";
+
+        await using (var checkCmd = new SqlCommand(checkSql, connection))
+        {
+            checkCmd.Parameters.AddWithValue("@IdClient", clientId);
+            checkCmd.Parameters.AddWithValue("@IdTrip", tripId);
+
+            var exists = await checkCmd.ExecuteScalarAsync();
+            if (exists != null)
+                throw new InvalidOperationException("Klient jest już zapisany na tę wycieczkę.");
+        }
+
+        // ---------- dopisanie klienta do wycieczki --------
+        var insertSql = @"INSERT INTO Client_Trip (IdClient, IdTrip, RegisteredAt) VALUES (@id, @tripId, @date)";
+        var insert = new SqlCommand(insertSql, connection);
+        insert.Parameters.AddWithValue("@id", clientId);
+        insert.Parameters.AddWithValue("@tripId", tripId);
+        insert.Parameters.AddWithValue("@date", int.Parse(DateTime.Now.ToString("yyyyMMdd")));
+        await insert.ExecuteNonQueryAsync();
+
+        return new Client_TripPutGetDTO();//zwraca pusty, bo i tak kod odpowiedzi to 204 No Content
     }
-
+    
     public async Task DeleteClientTrip(int id, int tripId)
     {
         var result = new List<ClientsTripGetDTO>();
@@ -263,7 +260,7 @@ public class DbService(IConfiguration configuration): IDbService
         var sqltrip = @"select 1 from trip where IdTrip = @tripId";
         await using (var commandtrip = new SqlCommand(sqltrip, connection))
         {
-            commandtrip.Parameters.Add(new SqlParameter("@id", tripId));
+            commandtrip.Parameters.Add(new SqlParameter("@tripid", tripId));
             await using var readertrip = await commandtrip.ExecuteReaderAsync();
             if (!await readertrip.ReadAsync())
             {

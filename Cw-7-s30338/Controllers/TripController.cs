@@ -12,6 +12,13 @@ public class TripController(IDbService service):ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetTrips()
     {
-        return Ok(await service.GetTripsInfoAndCountries());
+        try
+        {
+            return Ok(await service.GetTripsInfoAndCountries());
+        }
+        catch (Exception e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }

@@ -8,7 +8,8 @@ public class ClientCreateDTO
     public required string FirstName { get; set; }
     [MaxLength(120)]
     public required string LastName { get; set; }
-    [MaxLength(120)]
+    [MaxLength(120)][RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
+    //poczatek -> same litery i cyfry, potem @, potem znow same litery i cyfry, potem . nastepnie litery i cyfry
     public required string Email { get; set; }
     [MaxLength(120)]
     public required string Telephone { get; set; }

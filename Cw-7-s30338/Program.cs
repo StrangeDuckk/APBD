@@ -1,3 +1,5 @@
+using Cw_7_s30338.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -5,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddTransient<IDbService, DbService>();
+builder.Services.AddScoped<IDbService, DbService>();
+builder.Services.AddSingleton<IDbService, DbService>();
 
 var app = builder.Build();
 

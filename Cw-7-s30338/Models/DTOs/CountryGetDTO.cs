@@ -1,0 +1,7 @@
+﻿namespace Cw_7_s30338.Models.DTOs;
+
+public class CountryGetDTO
+{
+    public int IdCountry { get; set; }
+    public string Name { get; set; }
+}

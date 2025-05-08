@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Cw_7_s30338.Models.DTOs;
+﻿namespace Cw_7_s30338.Models.DTOs;
 
 public class Client_TripCreateDTO
 {

@@ -6,12 +6,12 @@ namespace Cw_7_s30338.Services;
 
 public interface IDbService
 {
-    public Task<IEnumerable<TripCountryGetDTO>> GetTripsInfoAndCountries();
-    public Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id);
-    public Task<ClientGetDTO> GetClientById(int id);
-    public Task<ClientGetDTO> CreateClient(ClientCreateDTO client);
-    public Task<Client_TripPutGetDTO> putClientTrip(int id, int tripId);
-    public Task DeleteClientTrip(int id, int tripId);
+    public Task<IEnumerable<TripCountryGetDTO>> GetTripsInfoAndCountries();//zadanie 1
+    public Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id);//zadanie 2
+    public Task<ClientGetDTO> GetClientById(int id);//czesc do zadania 2
+    public Task<ClientGetDTO> CreateClient(ClientCreateDTO client);//zadanie 3
+    public Task<Client_TripPutGetDTO> putClientTrip(int id, int tripId);//zadanie 4
+    public Task DeleteClientTrip(int id, int tripId);//zadanie 5
 }
 
 public class DbService(IConfiguration configuration): IDbService
@@ -39,8 +39,8 @@ public class DbService(IConfiguration configuration): IDbService
         {
             throw new NotFoundException("Nie znaleziono zadnej wycieczki");
         }
-        
-        while (await reader.ReadAsync())
+
+        do//do while bo await reader.readerAsync() sciaga pierwszy rekord, prez while bylby nieprzetworzony
         {
             result.Add(new TripCountryGetDTO
             {
@@ -53,7 +53,7 @@ public class DbService(IConfiguration configuration): IDbService
                 IdCountry = reader.GetInt32(6),
                 Country = reader.GetString(7)
             });
-        }
+        } while (await reader.ReadAsync());
         return result;
     }
     public async Task<IEnumerable<ClientsTripGetDTO>> GetClientsTrips(int id)
@@ -64,7 +64,7 @@ public class DbService(IConfiguration configuration): IDbService
         await using var connection = new SqlConnection(connectionString);
         
         //----- sprawdzenie istnienia klienta -------
-        var sqlklient = @"select 1 from client where IdClient = @id";
+        var sqlklient = @"select 1 from client where IdClient = @id";//jesli jakikolwiek klient istnieje bedzie 1 -> nie to null
         await using (var commandKlient = new SqlCommand(sqlklient, connection))
         {
             commandKlient.Parameters.Add(new SqlParameter("@id", id));
@@ -75,8 +75,7 @@ public class DbService(IConfiguration configuration): IDbService
                 throw new NotFoundException($"klient o id {id} nie istnieje");
             }
         }
-
-
+        
         // ------------ szukanie wycieczek dla isteniejacego klietna -----------
         var sql = @"Select t.IdTrip, t.Name, t.Description,t.DateFrom, t.DateTo,t.MaxPeople, ct.RegisteredAt, ct.PaymentDate
                     from Trip t join Client_Trip ct on t.IdTrip=ct.IdTrip
@@ -93,7 +92,7 @@ public class DbService(IConfiguration configuration): IDbService
             throw new NotFoundException($"klient o id {id} nie jedzie na zadna wycieczke");
         }
 
-        do //dla nie stracenia pierwszego rekordu w linijce 122 podczas sprawdzania
+        do //dla nie stracenia pierwszego rekordu w linijce 90 podczas sprawdzania
         {
             result.Add(new ClientsTripGetDTO
             {
@@ -115,6 +114,7 @@ public class DbService(IConfiguration configuration): IDbService
         
         await using var connection = new SqlConnection(connectionString);
         var sql = "select IdClient,FirstName,LastName,Email,Telephone,Pesel from Client where Id = @id";
+        //sciagniecei rekordu o podanym id
         
         await using var command = new SqlCommand(sql, connection);
         command.Parameters.AddWithValue("@id", id);
@@ -139,7 +139,7 @@ public class DbService(IConfiguration configuration): IDbService
     }
     public async Task<ClientGetDTO> CreateClient(ClientCreateDTO client)
     {
-        // ------------- walidacja danych ---------------
+        // ------------- dodatkowa walidacja danych ---------------
         if (string.IsNullOrEmpty(client.FirstName) || string.IsNullOrEmpty(client.LastName) || 
             string.IsNullOrEmpty(client.Email) || string.IsNullOrEmpty(client.Telephone) || 
             string.IsNullOrEmpty(client.Pesel))
@@ -152,7 +152,7 @@ public class DbService(IConfiguration configuration): IDbService
         await using var connection = new SqlConnection(connectionString);
         var sql = @"Insert into Client (FirstName, LastName, Email, Telephone, Pesel) 
                     values (@FirstName, @LastName, @Email, @Telephone, @Pesel)
-                    select scope_identity()"; // zwraca id ostatnio wstawionego wiersza
+                    select scope_identity()"; // scope_identity() zwraca id ostatnio wstawionego wiersza
         
         await using var command = new SqlCommand(sql, connection);
         
@@ -197,7 +197,7 @@ public class DbService(IConfiguration configuration): IDbService
         }
         
         //----- sprawdzenie istnienia wycieczki i liczby uczestnikow -------
-        var sqltrip = @"select 1 from trip where IdTrip = @tripId";
+        var sqltrip = @"select 1 from trip where IdTrip = @tripId"; //sprawdzenie czy wycieczka o id istnieje
         await using (var commandtrip = new SqlCommand(sqltrip, connection))
         {
             commandtrip.Parameters.Add(new SqlParameter("@id", tripId));
@@ -207,13 +207,13 @@ public class DbService(IConfiguration configuration): IDbService
                 throw new NotFoundException($"wycieczka o id {id} nie istnieje");
             }
 
-            var sqlLiczbaUczestnikow = $"select count(*) from Client_Trip where IdTrip = @tripId";
+            var sqlLiczbaUczestnikow = $"select count(*) from Client_Trip where IdTrip = @tripId"; //sciagniecie ile osob jest zpaisanych na ta wycieczke
             await using (var commandLiczba = new SqlCommand(sqlLiczbaUczestnikow, connection))
             {
                 commandLiczba.Parameters.Add(new SqlParameter("@tripId", tripId));
                 await using var readerLiczba = await commandLiczba.ExecuteReaderAsync();
                 var liczba = readerLiczba.GetInt32(0);
-                if (liczba+1> readertrip.GetInt32(5))
+                if (liczba+1> readertrip.GetInt32(5))//sprawdzenie czy mozna dopisac jeszcze jedna osobe
                 {
                     throw new FilledTripException($"Wycieczka o id {id} jest pelna");
                 }

@@ -3,7 +3,6 @@
 public class Country
 {
     //informacje o krajach docelowych
-    //potrzeba tylko getDTO
     public int IdCountry { get; set; }
     public string Name { get; set; }
 }

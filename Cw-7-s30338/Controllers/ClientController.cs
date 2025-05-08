@@ -24,6 +24,7 @@ public class ClientController(IDbService service):ControllerBase
         }
     }
 
+    //-------- dodawanie nowego klienta -------
     [HttpPost]
     public async Task<IActionResult> PostClient([FromBody] ClientCreateDTO body)
     {
@@ -31,20 +32,22 @@ public class ClientController(IDbService service):ControllerBase
         return CreatedAtAction(nameof(GetClientById), new {IdClient = client.Id}, client);
     }
 
+    //-------- pobieranie klienta przez podane id -------
     [HttpGet]
     [Route("{id}")]
     private async Task<IActionResult> GetClientById(int id)
     {
         try
         {
-            return Ok(await service.GetClientById(id));
+            return Ok(await service.GetClientById(id));//200
         }
         catch (Exception e)
         {
-            return NotFound(e.Message);
+            return NotFound(e.Message);//404
         }
     }
 
+    //-------- wysylanie klienta na wycieczke -------
     [HttpPut]
     [Route("{id}/trips/{tripId}")]
     public async Task<IActionResult> PutClientTrip(int id, int tripId)
@@ -63,6 +66,8 @@ public class ClientController(IDbService service):ControllerBase
             return NotFound(e.Message);//404
         }
     }
+    
+    //-------- odebranie wakacji klientowi -------
     [HttpDelete]
     [Route("{id}/trips/{tripId}")]
     public async Task<IActionResult> DeleteClientTrip(int id, int tripId)

@@ -14,11 +14,11 @@ public class TripController(IDbService service):ControllerBase
     {
         try
         {
-            return Ok(await service.GetTripsInfoAndCountries());
+            return Ok(await service.GetTripsInfoAndCountries());//200 0k
         }
         catch (Exception e)
         {
-            return NotFound(e.Message);
+            return NotFound(e.Message); //404
         }
     }
 }

@@ -1,0 +1,37 @@
+﻿w cmd:
+sqllocaldb start MSSQLLocalDB
+
+w mssql management studio:
+server name: (localdb)\MSSQLLocalDB
+
+-- Tworzenie bazy danych
+CREATE DATABASE apbd;
+GO
+
+-- Przełączenie się na tę bazę
+USE apbd;
+GO
+
+-- Tworzenie tabeli
+CREATE TABLE Zwierzaki (
+    Id_Zwierzaka INT IDENTITY(1,1) PRIMARY KEY,
+    NazwaGatunku NVARCHAR(50) NOT NULL,
+    Imie NVARCHAR(50) NOT NULL
+);
+
+-- Wstawienie przykładowych danych
+INSERT INTO Zwierzaki (NazwaGatunku, Imie) VALUES
+('pies', 'Dia'),
+('pies', 'Kropka'),
+('pies', 'Drops'),
+('kot', 'Czips'),
+('kot', 'Gacek'),
+('kot', 'Biszkopt'),
+('pies', 'Laki');
+GO
+
+select * from Zwierzaki
+
+"ConnectionStrings": {
+    "Default": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=apbd;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
+  }

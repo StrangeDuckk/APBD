@@ -35,3 +35,20 @@ select * from Zwierzaki
 "ConnectionStrings": {
     "Default": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=apbd;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
   }
+
+nugety:
+microsoft.data.sqlclient -> 6.0.2
+
+github:
+dane uzytkownika
+git config --global user.name "Twoje Imię"
+git config --global user.email "twoj_email@example.com"
+
+https 
+https://github.com/StrangeDuckk/APBD.git
+
+ew. sklonowanie repo:
+git clone https://github.com/StrangeDuckk/APBD.git
+
+potem normalnie dodawanie
+

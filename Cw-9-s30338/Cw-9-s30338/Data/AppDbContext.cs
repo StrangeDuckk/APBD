@@ -7,7 +7,7 @@ public class AppDbContext :DbContext
 {
     public DbSet<Medicament> Medicaments { get; set; }//operacje na tym jak na rzeczywistej tabeli
     
-    public AppDbContext(DbContextOptions options):base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options):base(options)
     {
     }
 }

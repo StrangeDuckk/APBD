@@ -17,5 +17,5 @@ public class Medicament
     [MaxLength(100)] 
     public string Type { get; set; } = null!;
     //gdyby medykamenty mialy wiele czegos dodajemy na dole liste tych rzeczy:
-    public IEnumerable<Prescription_Medicament> Prescription_Medicaments { get; set; } = null!;
+    public IEnumerable<Prescription_Medicament> Prescription_Medicaments { get; set; }
 }

@@ -9,11 +9,11 @@ namespace Cw_9_s30338.Models;
 public class Prescription_Medicament
 {
     [ForeignKey(nameof(IdMedicament))]
-    [Key, Column(Order = 0)]
+    [Key]
     public int IdMedicament { get; set; }
     
     [ForeignKey(nameof(IdPrescription))]
-    [Key, Column(Order = 1)]
+    [Key]
     public int IdPrescription { get; set; }
     
     public int? Dose { get; set; }

@@ -4,6 +4,7 @@ using Cw_9_s30338.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Cw_9_s30338.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250522152149_Finished")]
+    partial class Finished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,33 +33,9 @@ namespace Cw_9_s30338.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDoctor"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.HasKey("IdDoctor");
 
                     b.ToTable("Doctor");
-
-                    b.HasData(
-                        new
-                        {
-                            IdDoctor = 1,
-                            Email = "Jan.kowalski@znanyDoktor.pl",
-                            FirstName = "Jan",
-                            LastName = "Kowalski"
-                        });
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Medicament", b =>
@@ -85,15 +64,6 @@ namespace Cw_9_s30338.Migrations
                     b.HasKey("IdMedicament");
 
                     b.ToTable("Medicament");
-
-                    b.HasData(
-                        new
-                        {
-                            IdMedicament = 1,
-                            Description = "makes you unstoppable, do not overdose or you will stop :)",
-                            Name = "Viagra",
-                            Type = "without a receipt"
-                        });
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Patient", b =>
@@ -104,31 +74,9 @@ namespace Cw_9_s30338.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPatient"));
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.HasKey("IdPatient");
 
                     b.ToTable("Patient");
-
-                    b.HasData(
-                        new
-                        {
-                            IdPatient = 1,
-                            BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            FirstName = "John",
-                            LastName = "Doe"
-                        });
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Prescription", b =>
@@ -142,6 +90,9 @@ namespace Cw_9_s30338.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("DoctorIdDoctor")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DueDate")
                         .HasColumnType("datetime2");
 
@@ -151,32 +102,27 @@ namespace Cw_9_s30338.Migrations
                     b.Property<int>("IdPatient")
                         .HasColumnType("int");
 
+                    b.Property<int>("PatientIdPatient")
+                        .HasColumnType("int");
+
                     b.HasKey("IdPrescription");
 
-                    b.HasIndex("IdDoctor");
+                    b.HasIndex("DoctorIdDoctor");
 
-                    b.HasIndex("IdPatient");
+                    b.HasIndex("PatientIdPatient");
 
                     b.ToTable("Prescription");
-
-                    b.HasData(
-                        new
-                        {
-                            IdPrescription = 1,
-                            Date = new DateTime(2010, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            DueDate = new DateTime(2020, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IdDoctor = 1,
-                            IdPatient = 1
-                        });
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Prescription_Medicament", b =>
                 {
                     b.Property<int>("IdMedicament")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("IdPrescription")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Details")
                         .IsRequired()
@@ -191,28 +137,19 @@ namespace Cw_9_s30338.Migrations
                     b.HasIndex("IdPrescription");
 
                     b.ToTable("Prescription_Medicament");
-
-                    b.HasData(
-                        new
-                        {
-                            IdMedicament = 1,
-                            IdPrescription = 1,
-                            Details = "one pill every two days",
-                            Dose = 15
-                        });
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Prescription", b =>
                 {
                     b.HasOne("Cw_9_s30338.Models.Doctor", "Doctor")
-                        .WithMany("Prescriptions")
-                        .HasForeignKey("IdDoctor")
+                        .WithMany()
+                        .HasForeignKey("DoctorIdDoctor")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Cw_9_s30338.Models.Patient", "Patient")
-                        .WithMany("Prescriptions")
-                        .HasForeignKey("IdPatient")
+                        .WithMany()
+                        .HasForeignKey("PatientIdPatient")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -240,19 +177,9 @@ namespace Cw_9_s30338.Migrations
                     b.Navigation("Prescription");
                 });
 
-            modelBuilder.Entity("Cw_9_s30338.Models.Doctor", b =>
-                {
-                    b.Navigation("Prescriptions");
-                });
-
             modelBuilder.Entity("Cw_9_s30338.Models.Medicament", b =>
                 {
                     b.Navigation("Prescription_Medicaments");
-                });
-
-            modelBuilder.Entity("Cw_9_s30338.Models.Patient", b =>
-                {
-                    b.Navigation("Prescriptions");
                 });
 
             modelBuilder.Entity("Cw_9_s30338.Models.Prescription", b =>

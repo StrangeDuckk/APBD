@@ -12,10 +12,10 @@ public class Prescription
     public int IdPrescription { get; set; }
     public DateTime Date { get; set; }
     public DateTime DueDate { get; set; }
-    [ForeignKey(nameof(IdPatient))]
+    //nie uzywac forein key zaznaczonego
     public int IdPatient { get; set; }
     public Patient Patient { get; set; } = null!;//dodanie wlasciwosci nawigacyjnych
-    [ForeignKey(nameof(IdDoctor))]
+    
     public int IdDoctor { get; set; }
     public Doctor Doctor { get; set; } = null!;//wlasciwosci nawigacyjne
     

@@ -9,14 +9,14 @@ namespace Cw_9_s30338.Models;
 public class Doctor
 {
     [Key]
-    private int IdDoctor { get; set; }
+    public int IdDoctor { get; set; }
     [MaxLength(100)]
-    private string FirstName { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
     [MaxLength(100)]
-    private string LastName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     [MaxLength(100)]
-    private string Email { get; set; } = null!;
+    public string Email { get; set; } = null!;
     
     //nawigacyjne:
-    private IEnumerable<Prescription> Prescription { get; set; } = null!;
+    public IEnumerable<Prescription> Prescriptions { get; set; } = null!;
 }

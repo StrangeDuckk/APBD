@@ -9,13 +9,13 @@ namespace Cw_9_s30338.Models;
 public class Patient
 {
     [Key]
-    private int IdPatient { get; set; }
+    public int IdPatient { get; set; }
     [MaxLength(100)]
-    private string FirstName { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
     [MaxLength(100)]
-    private string LastName { get; set; } = null!;
-    private DateTime BirthDate { get; set; }
+    public string LastName { get; set; } = null!;
+    public DateTime BirthDate { get; set; }
     
     //nawigacyjne:
-    private IEnumerable<Prescription> Prescriptions { get; set; } = null!;
+    public IEnumerable<Prescription> Prescriptions { get; set; } = null!;
 }

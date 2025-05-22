@@ -26,6 +26,9 @@ przeniesc sie do folderu w ktorym jest .csProj
 dotnet ef migrations add "Create student table" -> w ciapkach opis co sie stalo
 powinno byc Build started... i potem Build suceeded potem Done. To...
 
+dotnet ef migrations add "Finished" -> na koniec i zeby sie zbudowalo
+dotnet ef database update -> taki git push
+
 bład:
 Unable to create a 'DbContext' of type 'RuntimeType'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions' while attempting to activate 'Cw_9_s30338.Data.AppDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
 

@@ -1,0 +1,27 @@
+﻿Microsoft.EntityFrameworkCore 9.0.5
+Microsoft.EntityFrameworkCore.SqlServer 9.0.5
+Microsoft.EntityFrameworkCore.Design 9.0.5  dla funkcjonalnosci code first
+Microsoft.EntityFrameworkCore.Tools 9.0.5 do uzywania konsoli
+
+dodanie w Program.cs:
+builder.Services.AddDbContext<AppDbContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+}); 
+
+w terminalu:
+dotnet tool install --global dotnet-ef -> jednorazowo dla urzazenia
+
+dotnet ef -> uruchomienie, chcemy zobaczyc kuca:
+                     _/\__
+               ---==/    \\
+         ___  ___   |.    \|\
+        | __|| __|  |  )   \\\
+        | _| | _|   \_/ |  //|\\
+        |___||_|       /   \\\/\\
+wtedy wszystko kopytkuje
+
+operacje w terminalu:
+przeniesc sie do folderu w ktorym jest .csProj
+dotnet ef migrations add "Create student table" -> w ciapkach opis co sie stalo
+powinno byc Build started... i potem Build suceeded potem Done. To...

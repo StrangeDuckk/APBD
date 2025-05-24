@@ -10,6 +10,8 @@ namespace Cw_9_s30338.Services;
 public interface IDbService
 {
     Task<GetPrescriptionDTO> AddNewPrescriptionAsync(CreatePrescriptionDTO prescriptionDto);
+    Task<GetPatientDTO?> GetPatientByIdAsync(int id);
+    Task<IEnumerable<GetPatientDTO>> GetPatientsAsync();
 }
 
 public class DbService(AppDbContext data) :IDbService
@@ -114,7 +116,7 @@ public class DbService(AppDbContext data) :IDbService
             DueDate = presc.DueDate,
         };
     }
-
+    
     private async Task<GetPatientDTO> AddNewPatientAsync(Patient prescriptionDtoCreatePatient)
     {
         //dla pewnosci sprawdzenie ze pacjent na pewno nie istnieje
@@ -133,6 +135,31 @@ public class DbService(AppDbContext data) :IDbService
             BirthDate = prescriptionDtoCreatePatient.BirthDate,
         };
     }
+    
+    public async Task<GetPatientDTO?> GetPatientByIdAsync(int id)
+    {
+        var patient = await data.Patients.FirstOrDefaultAsync(p => p.IdPatient == id);
+        if (patient is null)
+            throw new NotFoundException($"Patient {id} not found");
+        
+        return new GetPatientDTO
+        {
+            IdPatient = patient.IdPatient,
+            FirstName = patient.FirstName,
+            LastName = patient.LastName,
+            BirthDate = patient.BirthDate,
+        };
+    }
 
-    //todo getter dla pacjentow
+    public async Task<IEnumerable<GetPatientDTO>> GetPatientsAsync()
+    {
+        return await data.Patients
+            .Select(p => new GetPatientDTO
+            {
+                IdPatient = p.IdPatient,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                BirthDate = p.BirthDate,
+            }).ToListAsync();
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Cw_9_s30338.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cw_9_s30338.Models;
@@ -20,5 +21,5 @@ public class Prescription
     public Doctor Doctor { get; set; } = null!;//wlasciwosci nawigacyjne
     
     //nawigacyjne do tabeli posredniej
-    public IEnumerable<Prescription_Medicament> PrescriptionMedicaments { get; set; }
+    public List<Prescription_Medicament> PrescriptionMedicaments { get; set; }
 }

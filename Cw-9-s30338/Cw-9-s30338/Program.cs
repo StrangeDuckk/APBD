@@ -1,4 +1,5 @@
 using Cw_9_s30338.Data;
+using Cw_9_s30338.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
 });
+builder.Services.AddTransient<IDbService, DbService>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

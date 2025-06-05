@@ -12,6 +12,7 @@ public interface IDbService
 {
     Task<GetTripDTO> GetAllTripsAsync(int page=1,int pageSize=10);
     Task DeleteClientAsync(string idClient);
+    Task<GetClientTripDTO> AddClietnTripAsync(CreateClientTripDTO clientTrip);
 }
 
 public class DbService(Cw10S30338DbContext data): IDbService
@@ -76,5 +77,72 @@ public class DbService(Cw10S30338DbContext data): IDbService
         
         data.Clients.Remove(client);
         await data.SaveChangesAsync();
+    }
+
+    public async Task<GetClientTripDTO> AddClietnTripAsync(CreateClientTripDTO clientTrip)
+    {
+        // ----------------- istnienie klienta ------------------
+        var clientExists = await data.Clients.FirstOrDefaultAsync(c => c.Pesel == clientTrip.Pesel);
+        if (clientExists != null)
+        {
+            throw new AlreadyExistingClientException($"Client {clientTrip.Pesel} already exists");
+        }
+        
+        // ---------------- wycieczka istnieje i sie nie zaczela ----------
+        var tripExists = await data.Trips.FirstOrDefaultAsync(ct => ct.IdTrip == clientTrip.IdTrip);
+        if (tripExists == null)
+        {
+            throw new NotFound($"trip {clientTrip.IdTrip} not found");
+        }
+
+        if (tripExists.DateFrom < DateTime.UtcNow)
+        {
+            throw new TripAlreadyStartedException($"trip {clientTrip.IdTrip} already started");
+        }
+        
+        // ------------- dodanie klienta ----------------
+        var newClient = new Client
+        {
+            FirstName = clientTrip.FirstName,
+            LastName = clientTrip.LastName,
+            Email = clientTrip.Email,
+            Telephone = clientTrip.Telephone,
+            Pesel = clientTrip.Pesel,
+        };
+        
+        await data.Clients.AddAsync(newClient);
+        await data.SaveChangesAsync();
+        
+        // -------------- sprawdzenie czy klient nie jest juz dopisany do wycieczki ---------
+        var clientHasTrip = await data.ClientTrips.AnyAsync(ct => ct.IdClient == clientExists.IdClient && ct.IdTrip == clientTrip.IdTrip);
+        if (clientHasTrip)
+        {
+            throw new AlreadyExistingClientException($"Client {clientTrip.Pesel} is already registered for trip {clientTrip.IdTrip}");
+        }
+        
+        // ------------ dopisanie klienta do wycieczki -------------
+        var newClientTrip = new ClientTrip
+        {
+            IdClient = newClient.IdClient,
+            IdTrip = clientTrip.IdTrip,
+            PaymentDate = clientTrip.PaymentDate,
+            RegisteredAt = DateTime.Now,
+        };
+        
+        await data.ClientTrips.AddAsync(newClientTrip);
+        await data.SaveChangesAsync();
+
+        return new GetClientTripDTO
+        {
+            client = new ClientDTO
+            {
+                FirstName = clientTrip.FirstName,
+                LastName = clientTrip.LastName,
+            },
+            trip = new TripDTO
+            {
+                IdTrip = newClientTrip.IdTrip,
+            }
+        };
     }
 }

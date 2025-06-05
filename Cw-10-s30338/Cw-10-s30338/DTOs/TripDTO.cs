@@ -9,4 +9,5 @@ public class TripDTO
     public int MaxPeople {get;set;}
     public List<CountryDTO> Countries {get;set;}
     public List<ClientDTO> Clients {get;set;}
+    public int IdTrip {get;set;}
 }

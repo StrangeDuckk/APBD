@@ -64,6 +64,12 @@ dotnet ef migrations add "message"
 
 jak gotowe to dotnet ef database update
 
+blad:
+Unable to create a 'DbContext' of type 'RuntimeType'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions' while attempting to activat
+e 'PJATK_APBD_Kolokwium_EFCore___CodeFirst_ver._3.Data.AppDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
+
+var app = builder.Build(); -> musi byc nad dodanymi przez nas rzeczami
+
 DO POMINIECIA
 powrot do appdbcontext, generowanie kodu -> on model creating
 dodanie danych do tablic i potem migracje

@@ -1,0 +1,91 @@
+﻿git repozytorium:
+na stronie add repo
+https://github.com/new
+private
+ADD README
+Add gitignore visual
+po utworzeniu na stronie pobrac link do niego
+otworzyc powershella na np pulpicie
+przejscie do repo docelowego
+sklonowanie repozytorium:
+git clone https://github.com/StrangeDuckk/testToDelete.git
+wtedy utowrzy sie folder
+utworzenie w nim pliku ridera
+przejscie do folderu pliku ridera
+git status
+dodac do gitignore pliki /.idea
+git reset HEAD . dla usuneicia plikow z obszatu add
+git commit -m "initial commit"
+git push
+
+rider:
+
+w appsetings.json:zmienic initial catalog i dodac connectionstring
+
+  "ConnectionStrings": {
+    "Default": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=kolokwium2Przykladowe;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"
+  },
+  
+
+dosciagac pakietu w nugecie:
+microsoft.entityFrametorkCore
+microsoft.entityFrametorkCore.sqlServer
+microsoft.entityFrametorkCore.design
+microsoft.entityFrametorkCore.tools
+
+
+stworzyc folder data, w nim AppDbContext.cs -> tutaj dane do wklejenia do tabel, zrobic :DbContext i wygenerowac kod: konstruktor DbContext(dbcontextOptions options)
+cos takiego:
+public AppDbContext(DbContextOptions options) : base(options)
+    {
+    }
+
+
+w program cs dodac appdbcontext
+builder.Services.AddDbContext<AppDbContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+});
+
+
+teraz dodawanie tabel, pisanei samodzielnie
+directory -> models
+model = tablica
+
+potem dodac wszystkie tabele w appdbcontext jak odbset<model/tabela> jako pole
+
+doistalowanie dotnet tool:
+dotnet tool install --global dotnet-ef
+dotnet ef -> chcemy kuca wypisanego
+
+przenosimy sie glebiej tak zeby byc na wysokosci csproj
+MIGRACJE
+dotnet ef migrations add "message"
+
+jak gotowe to dotnet ef database update
+
+DO POMINIECIA
+powrot do appdbcontext, generowanie kodu -> on model creating
+dodanie danych do tablic i potem migracje
+np:
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        
+        var student = new Student
+        {
+            Id = 1,
+            FirstName = "jan",
+            LastName = "nowak",
+            Email = "jan.nowak@gmail.com"
+        };
+        
+        modelBuilder.Entity<Student>().HasData(student);
+        
+    }
+    
+   
+tworzenie DTOs
+tabel jako gety
+
+i dalej normalnie juz 

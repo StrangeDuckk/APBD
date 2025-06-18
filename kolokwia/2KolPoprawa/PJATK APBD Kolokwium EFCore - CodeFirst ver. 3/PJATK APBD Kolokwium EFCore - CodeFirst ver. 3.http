@@ -1,0 +1,6 @@
+@PJATK_APBD_Kolokwium_EFCore___CodeFirst_ver._3_HostAddress = http://localhost:5205
+
+GET {{PJATK_APBD_Kolokwium_EFCore___CodeFirst_ver._3_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

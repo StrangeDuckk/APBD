@@ -18,4 +18,16 @@ public class CourseController(IDbService service):ControllerBase
         
         return Ok(result);
     }
+
+    [HttpDelete]
+    [Route("{id:int}")]
+    public async Task<IActionResult> DeleteCourseById([FromRoute] int id)
+    {
+        var result = await service.DeleteCourseByIdAsync(id);
+        
+        if (result == null)
+            return NotFound();
+        
+        return Ok(new {message = result});
+    }
 }

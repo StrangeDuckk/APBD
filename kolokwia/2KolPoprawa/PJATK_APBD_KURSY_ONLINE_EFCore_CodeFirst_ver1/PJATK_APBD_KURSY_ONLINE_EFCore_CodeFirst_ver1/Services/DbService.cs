@@ -7,6 +7,7 @@ namespace PJATK_APBD_KURSY_ONLINE_EFCore_CodeFirst_ver1.Services;
 public interface IDbService
 {
     public Task<GetCourseWithEnrollmentsAndAssignedStudents?> GetCoursesByIdAsync(int id);
+    public Task<string?> DeleteCourseByIdAsync(int id);
 }
 
 public class DbService(AppDbContext data) : IDbService
@@ -51,5 +52,39 @@ public class DbService(AppDbContext data) : IDbService
             Enrollments = enrollments,
             AssignedStudents = assignedStudents
         };
+    }
+
+    public async Task<string?> DeleteCourseByIdAsync(int id)
+    {
+        // ------- usuwanie niebezpieczne -> wszsytko w transakcji --------
+        var transaction = await data.Database.BeginTransactionAsync();
+        try
+        {
+            // ---------- sprawdzenie czy kurs istnieje ------------
+            var course = await data.Courses.FirstOrDefaultAsync(c => c.CourseId == id);
+            if (course == null)
+                return null;
+            
+            // ----------- usuniecie enrollmentow -----------
+            var enrollmentsForCourse = await data.Enrollments.Where(e => e.CourseId == id).ToListAsync();
+            data.Enrollments.RemoveRange(enrollmentsForCourse);
+            
+            // ----------- usuniecie studentCourse ----------
+            var studentCourseToDelete = await data.StudentCourses.Where(s => s.CourseId == id).ToListAsync();
+            data.StudentCourses.RemoveRange(studentCourseToDelete);
+            // ----------- usuniecie kursu --------------
+            data.Courses.Remove(course);
+            
+            await data.SaveChangesAsync();
+            
+            await transaction.CommitAsync();
+
+            return $"Deleted Course with id: {id}";
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }

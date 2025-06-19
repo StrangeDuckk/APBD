@@ -2,5 +2,9 @@
 
 public class GetEmployeeWithAccesibleRoomsDto
 {
-    
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public ICollection<GetRoomAccessDto>? Rooms { get; set; }
+    public string Message {get; set;} = null!;
 }

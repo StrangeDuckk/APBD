@@ -1,0 +1,6 @@
+@PJATK_APBD_SALE_KONFERENCYJNE_EFCore_CodeFirst_ver2_HostAddress = http://localhost:5141
+
+GET {{PJATK_APBD_SALE_KONFERENCYJNE_EFCore_CodeFirst_ver2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

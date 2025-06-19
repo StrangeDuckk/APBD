@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PJATK_APBD_SALE_KONFERENCYJNE_EFCore_CodeFirst_ver2", "PJATK_APBD_SALE_KONFERENCYJNE_EFCore_CodeFirst_ver2.csproj", "{AE20B53C-833D-4202-AF6A-609306BE5941}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE20B53C-833D-4202-AF6A-609306BE5941}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE20B53C-833D-4202-AF6A-609306BE5941}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE20B53C-833D-4202-AF6A-609306BE5941}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE20B53C-833D-4202-AF6A-609306BE5941}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -10,7 +10,7 @@ public class StudentsController(IDbService service):ControllerBase
 {
     [HttpPost]
     [Route("with-enrollments")]
-    public async Task<IActionResult> PostStudentWithEnrollmentsAsync(CreateStudentWithEnrollmentDto studentwithEnrollments)
+    public async Task<IActionResult> PostStudentWithEnrollmentsAsync([FromBody] CreateStudentWithEnrollmentDto studentwithEnrollments)
     {
         return Ok(await service.PostStudentWithEnrollmentsAsync(studentwithEnrollments));
     }

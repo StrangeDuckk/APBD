@@ -1,0 +1,6 @@
+@PJATK_APBD_KURSY_ONLINE_EFCore_CodeFirst_ver1_HostAddress = http://localhost:5130
+
+GET {{PJATK_APBD_KURSY_ONLINE_EFCore_CodeFirst_ver1_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
